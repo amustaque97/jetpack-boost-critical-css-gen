@@ -1,9 +1,10 @@
 /* global browser */
 
-const { generateCriticalCSS, BrowserInterfacePuppeteer } = require( '../../index' );
+const { generateCriticalCSS, BrowserInterfacePuppeteer, Cancel } = require( '../../index' );
 const { dataUrl } = require( '../lib/data-directory' );
 const mockFetch = require( '../lib/mock-fetch' );
 const path = require( 'path' );
+const { CancelledError } = require('../../lib/errors');
 
 jest.mock( 'node-fetch' );
 require( 'node-fetch' ).mockImplementation( mockFetch );
@@ -114,6 +115,20 @@ describe( 'Generate Critical CSS', () => {
 					]
 				}
 			] );
+		} );
+	} );
+
+	describe( 'Process', () => {
+
+		it( 'Cancels the process when asked to', async () => {
+			const promise = generateCriticalCSS( {
+				urls: Object.values( testPageUrls ),
+				viewports: [ { width: 640, height: 480 } ],
+				browserInterface: new BrowserInterfacePuppeteer( testPages ),
+				progressCallback: () => Cancel,
+			} );
+
+			await expect( promise ).rejects.toThrow( CancelledError );
 		} );
 	} );
 

@@ -32,9 +32,11 @@ export declare class CriticalCssError {
 	static fromJSON: ( data: any ) => CriticalCssError;
 }
 
+export const Cancel: Symbol;
+
 export declare function generateCriticalCSS( args: {
 	browserInterface: BrowserInterface,
-	progressCallback?: ( step: number, stepCount: number ) => void,
+	progressCallback?: ( step: number, stepCount: number ) => Symbol | void,
 	urls: string[],
 	viewports: Array< { width: number, height: number } >,
 	filters?: CssFilters,
